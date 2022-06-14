@@ -10,16 +10,6 @@ suppressPackageStartupMessages({
     
 })
 
-# Italia
-# data <- read_tsv("C:/Users/pierg/Documents/R/CNR_project/network_ITA_it_20200122-20201202.tsv.gz")
-# data <- read_tsv("C:/Users/pierg/Documents/R/CNR_project/full_ITA_it_20200122-20201202.tsv.gz")
-# Spagna
-# data <- read_tsv("C:/Users/pierg/Documents/R/CNR_project/data_heuristica.tsv.gz")
-# USA
-data <- read_tsv("C:/Users/pierg/Documents/R/CNR_project/network_USA_en_20200122-20200522.tsv.gz")
-# GBR
-# data <- read_tsv("C:/Users/pierg/Documents/R/CNR_project/network_GBR_en_20200122-20200522.tsv.gz")
-
 
 #----------------------------------------------------------------------------------------------------------------------
 #------------------------------  CORE TEMPORAL ANALYSIS -------------------------------------------
@@ -132,7 +122,7 @@ g1
 #------------------------------  CAUSAL INFERENCE -------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------
 
-source("C:/Users/pierg/Documents/R/CNR_project/Basic_Timeseries_Causal_Inference.R")
+source("Basic_Timeseries_Causal_Inference.R")
 library(pracma)
 library(rEDM)
 getCC(list(df_save$user_core.rel, df_save$user_peri.rel), method = "pearson")
