@@ -10,16 +10,6 @@ suppressPackageStartupMessages({
     
 })
 
-# Italia
-# data <- read_tsv("C:/Users/pierg/Documents/R/CNR_project/network_ITA_it_20200122-20201202.tsv.gz")
-data <- read_tsv("C:/Users/pierg/Documents/R/CNR_project/full_ITA_it_20200122-20201202.tsv.gz")
-# Spagna
-# data <- read_tsv("C:/Users/pierg/Documents/R/CNR_project/data_heuristica.tsv.gz")
-# USA
-# data <- read_tsv("C:/Users/pierg/Documents/R/CNR_project/network_USA_en_20200122-20200522.tsv.gz")
-# GBR
-# data <- read_tsv("C:/Users/pierg/Documents/R/CNR_project/network_GBR_en_20200122-20200522.tsv.gz")
-
 
 # Aggiungi o togli bot
 data <- data %>% filter(isBot == 0)
@@ -49,7 +39,7 @@ creators <- core$User
 consumers <- periphery$User
 
 
-# Però questa analisi è chiaramente dominata dai numeri piccoli. Scegliamo di rationare con numeri un po' più grandi aggiungendo un cutoff
+# PerÃ² questa analisi Ã¨ chiaramente dominata dai numeri piccoli. Scegliamo di rationare con numeri un po' piÃ¹ grandi aggiungendo un cutoff
 
 cutoff <- 10
 
@@ -109,70 +99,6 @@ h2 <- ggplot(data.frame(ratio2), aes(x = ratio2)) +
 
 h2
 
-png("C:/Users/pierg/Documents/R/CNR_project/RT_per_A.png", width = 1900, height = 950)
-h12 <- ggarrange(h1, h2, ncol = 2, nrow = 1)
-h12
-dev.off()
-
-
-
-
-
-
-### WORK NOT NEEDED ANYMORE: RECONSTRUCTING CASCADES ###
-
-# 
-# fakes <- data %>% filter(!is.na(FactType)) %>% 
-#     filter(FactType == "FAKE/HOAX" | FactType == "CONSPIRACY/JUNKSCI"  | FactType == "CLICKBAIT" )
-# 
-# Tfakes <- fakes %>% filter(tweetType == "T")
-# RTfakes <- fakes %>% filter(tweetType == "RT")
-# 
-# 
-# # Prima cosa: selezioniamo gli indirizzi per cui abbiamo un tweet originario (la data è importante per quest'ultimo punto)
-# # Tutti gli url presenti sia in Tfakes che in RTfakes. COsì facendo ci restringiamo solo alle cascate che partono da un T, no da RT
-# urls = unique(left_join(Tfakes, RTfakes, by="URL")$URL) 
-# 
-# 
-# 
-# # Ragionamento momentaneo usando un URL fissato
-# # Eliminiamo i singoletti
-# prova <- df %>% filter(toUser %in% Tfakes$User  )
-# prova2 <-  Tfakes %>% filter(URL == url) %>% filter(User %in% prova$toUser)
-# 
-# 
-# leaves <- lapply(urls, function(x) RTfakes %>% filter(URL == x & toUser %in% Tfakes$User[Tfakes$URL == x]  ) %>% select(Datetime, User, toUser, URL) )
-# 
-# # PROVIAMO A PLOTTARE
-# g = graph.data.frame(prova3[,c('toUser','User')],directed = T)
-# V(g)$color[names(V(g)) %in% creators] = "red"
-# V(g)$color[names(V(g)) %in% consumers] = "blue"
-# V(g)$label.color = ""
-# V(g)$size = 5
-# plot(g,edge.arrow.size=0.5,layout=layout_as_tree)
-# 
-# ## PROBLEMA COI COLORI## Ci sono alcuni nodi che non sono ne core ne peri
-# 
-# 
-# f_urls = sort( table(fakes$URL), decreasing = TRUE)
-# urls = names(f_urls)
-# 
-# # origin <- lapply(urls, function(x) Tfakes[Tfakes$URL == x, ] %>% select(User, Datetime) )
-# # names(origin) <- urls
-# leaves <- lapply(urls, function(x) RTfakes %>% filter(URL == x & toUser %in% Tfakes$User[Tfakes$URL == x]  ) %>% select(Datetime, User, toUser, URL) )
-# leaves <- leaves[sapply(leaves, function(x) dim(x)[1]) >0 ]
-# a = do.call(rbind.data.frame, leaves)
-# a = lapply(1:dim(Tfakes)[1], function(x) a %>% filter(URL == Tfakes$URL[x] & toUser == Tfakes$User[x] & Datetime > Tfakes$Datetime[x]) )
-# a <- a[sapply(a, function(x) dim(x)[1]) >0 ]
-# a = do.call(rbind.data.frame, a)
-# 
-# names(origin) <- urls
-# 
-# leaves <- lapply()
-#     
-    
-    
-    
     
     
     
