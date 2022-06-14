@@ -11,163 +11,6 @@ suppressPackageStartupMessages({
 })
 
 
-duration_markov <- function(a) {
-    
-    duration <- data.frame("C"=0, "P"=0)
-    # Numero di volte in cui qualcuno entra in C o P, anche se da parte di una persona già precedentemente uscitavi
-    b <- c <- a
-    for (i in 2:ncol(a) ) {
-        b[ a[,i] == "C" & a[,i-1] == "P" , i ] <- "1"
-        b[ a[,i] == "C" & a[,i-1] == "O" , i ] <- "1"
-        c[ a[,i] == "P" & a[,i-1] == "C" , i ] <- "2"
-        c[ a[,i] == "P" & a[,i-1] == "O" , i ] <- "2"
-        
-    }
-    
-    N_c <- sum(b == "1")
-    N_p <- sum(c == "2")
-    
-    b <- c <- a
-    for (i in 3:ncol(a) ) {
-        b[ a[,i] == "O" & a[,i-1] == "C" & a[,i-2] == "O" , i ] <- "1"
-        b[ a[,i] == "O" & a[,i-1] == "C" & a[,i-2] == "P" , i ] <- "1"
-        b[ a[,i] == "P" & a[,i-1] == "C" & a[,i-2] == "O" , i ] <- "1"
-        b[ a[,i] == "P" & a[,i-1] == "C" & a[,i-2] == "P" , i ] <- "1"
-        
-        c[ a[,i] == "O" & a[,i-1] == "P" & a[,i-2] == "O" , i ] <- "2"
-        c[ a[,i] == "O" & a[,i-1] == "P" & a[,i-2] == "C" , i ] <- "2"
-        c[ a[,i] == "C" & a[,i-1] == "P" & a[,i-2] == "O" , i ] <- "2"
-        c[ a[,i] == "C" & a[,i-1] == "P" & a[,i-2] == "C" , i ] <- "2"
-        
-    }
-    
-    b <- b[, 4:ncol(a) ]
-    c <- c[, 4:ncol(a) ]
-    
-    duration[1,1] <- gather(b, key = "time", value ="dir") %>% count(dir) %>% filter(dir==1) %>% select(n) / N_c
-    duration[1,2] <- gather(c, key = "time", value ="dir") %>% count(dir)  %>% filter(dir==2) %>% select(n) / N_p
-    
-    b <- c <- a
-    for (i in 4:ncol(a) ) {
-        b[ a[,i] == "O" & a[,i-1] == "C" & a[,i-2] == "C" & a[,i-3] == "O" , i ] <- "1"
-        b[ a[,i] == "O" & a[,i-1] == "C" & a[,i-2] == "C" & a[,i-3] == "P" , i ] <- "1"
-        b[ a[,i] == "P" & a[,i-1] == "C" & a[,i-2] == "C" & a[,i-3] == "O" , i ] <- "1"
-        b[ a[,i] == "P" & a[,i-1] == "C" & a[,i-2] == "C" & a[,i-3] == "P" , i ] <- "1"
-        
-        c[ a[,i] == "O" & a[,i-1] == "P" & a[,i-2] == "P" & a[,i-3] == "O" , i ] <- "2"
-        c[ a[,i] == "O" & a[,i-1] == "P" & a[,i-2] == "P" & a[,i-3] == "C" , i ] <- "2"
-        c[ a[,i] == "C" & a[,i-1] == "P" & a[,i-2] == "P" & a[,i-3] == "O" , i ] <- "2"
-        c[ a[,i] == "C" & a[,i-1] == "P" & a[,i-2] == "P" & a[,i-3] == "C" , i ] <- "2"
-        
-    }
-    
-    b <- b[, 5:ncol(a) ]
-    c <- c[, 5:ncol(a) ]
-    
-    duration[2,1] <- gather(b, key = "time", value ="dir") %>% count(dir) %>% filter(dir==1) %>% select(n) / N_c
-    duration[2,2] <- gather(c, key = "time", value ="dir") %>% count(dir)  %>% filter(dir==2) %>% select(n) / N_p
-    
-    b <- c <- a
-    for (i in 5:ncol(a) ) {
-        b[ a[,i] == "O" & a[,i-1] == "C" & a[,i-2] == "C" & a[,i-3] == "C" & a[,i-4] == "O" , i ] <- "1"
-        b[ a[,i] == "O" & a[,i-1] == "C" & a[,i-2] == "C" & a[,i-3] == "C" & a[,i-4] == "P" , i ] <- "1"
-        b[ a[,i] == "P" & a[,i-1] == "C" & a[,i-2] == "C" & a[,i-3] == "C" & a[,i-4] == "O" , i ] <- "1"
-        b[ a[,i] == "P" & a[,i-1] == "C" & a[,i-2] == "C" & a[,i-3] == "C" & a[,i-4] == "P" , i ] <- "1"
-        
-        c[ a[,i] == "O" & a[,i-1] == "P" & a[,i-2] == "P" & a[,i-3] == "P" & a[,i-4] == "O" , i ] <- "2"
-        c[ a[,i] == "O" & a[,i-1] == "P" & a[,i-2] == "P" & a[,i-3] == "P" & a[,i-4] == "C" , i ] <- "2"
-        c[ a[,i] == "C" & a[,i-1] == "P" & a[,i-2] == "P" & a[,i-3] == "P" & a[,i-4] == "O" , i ] <- "2"
-        c[ a[,i] == "C" & a[,i-1] == "P" & a[,i-2] == "P" & a[,i-3] == "P" & a[,i-4] == "C" , i ] <- "2"
-        
-    }
-    
-    b <- b[, 6:ncol(a) ]
-    c <- c[, 6:ncol(a) ]
-    
-    duration[3,1] <- gather(b, key = "time", value ="dir") %>% count(dir) %>% filter(dir==1) %>% select(n) / N_c
-    duration[3,2] <- gather(c, key = "time", value ="dir") %>% count(dir)  %>% filter(dir==2) %>% select(n) / N_p
-    
-    b <- c <- a
-    for (i in 6:ncol(a) ) {
-        b[ a[,i] == "O" & a[,i-1] == "C" & a[,i-2] == "C" & a[,i-3] == "C" & a[,i-4] == "C" & a[,i-5] == "O" , i ] <- "1"
-        b[ a[,i] == "O" & a[,i-1] == "C" & a[,i-2] == "C" & a[,i-3] == "C" & a[,i-4] == "C" & a[,i-5] == "P" , i ] <- "1"
-        b[ a[,i] == "P" & a[,i-1] == "C" & a[,i-2] == "C" & a[,i-3] == "C" & a[,i-4] == "C" & a[,i-5] == "O" , i ] <- "1"
-        b[ a[,i] == "P" & a[,i-1] == "C" & a[,i-2] == "C" & a[,i-3] == "C" & a[,i-4] == "C" & a[,i-5] == "P" , i ] <- "1"
-        
-        c[ a[,i] == "O" & a[,i-1] == "P" & a[,i-2] == "P" & a[,i-3] == "P" & a[,i-4] == "P" & a[,i-5] == "O" , i ] <- "2"
-        c[ a[,i] == "O" & a[,i-1] == "P" & a[,i-2] == "P" & a[,i-3] == "P" & a[,i-4] == "P" & a[,i-5] == "C" , i ] <- "2"
-        c[ a[,i] == "C" & a[,i-1] == "P" & a[,i-2] == "P" & a[,i-3] == "P" & a[,i-4] == "P" & a[,i-5] == "O" , i ] <- "2"
-        c[ a[,i] == "C" & a[,i-1] == "P" & a[,i-2] == "P" & a[,i-3] == "P" & a[,i-4] == "P" & a[,i-5] == "C" , i ] <- "2"
-        
-    }
-    
-    b <- b[, 7:ncol(a) ]
-    c <- c[, 7:ncol(a) ]
-    
-    duration[4,1] <- gather(b, key = "time", value ="dir") %>% count(dir) %>% filter(dir==1) %>% select(n) / N_c
-    duration[4,2] <- gather(c, key = "time", value ="dir") %>% count(dir)  %>% filter(dir==2) %>% select(n) / N_p
-    
-    b <- c <- a
-    for (i in 7:ncol(a) ) {
-        b[ a[,i] == "O" & a[,i-1] == "C" & a[,i-2] == "C" & a[,i-3] == "C" & a[,i-4] == "C" & a[,i-5] == "C" & a[,i-6] == "O" , i ] <- "1"
-        b[ a[,i] == "O" & a[,i-1] == "C" & a[,i-2] == "C" & a[,i-3] == "C" & a[,i-4] == "C" & a[,i-5] == "C" & a[,i-6] == "P" , i ] <- "1"
-        b[ a[,i] == "P" & a[,i-1] == "C" & a[,i-2] == "C" & a[,i-3] == "C" & a[,i-4] == "C" & a[,i-5] == "C" & a[,i-6] == "O" , i ] <- "1"
-        b[ a[,i] == "P" & a[,i-1] == "C" & a[,i-2] == "C" & a[,i-3] == "C" & a[,i-4] == "C" & a[,i-5] == "C" & a[,i-6] == "P" , i ] <- "1"
-        
-        c[ a[,i] == "O" & a[,i-1] == "P" & a[,i-2] == "P" & a[,i-3] == "P" & a[,i-4] == "P" & a[,i-5] == "P" & a[,i-6] == "O" , i ] <- "2"
-        c[ a[,i] == "O" & a[,i-1] == "P" & a[,i-2] == "P" & a[,i-3] == "P" & a[,i-4] == "P" & a[,i-5] == "P" & a[,i-6] == "C" , i ] <- "2"
-        c[ a[,i] == "C" & a[,i-1] == "P" & a[,i-2] == "P" & a[,i-3] == "P" & a[,i-4] == "P" & a[,i-5] == "P" & a[,i-6] == "O" , i ] <- "2"
-        c[ a[,i] == "C" & a[,i-1] == "P" & a[,i-2] == "P" & a[,i-3] == "P" & a[,i-4] == "P" & a[,i-5] == "P" & a[,i-6] == "C" , i ] <- "2"
-        
-    }
-    
-    b <- b[, 8:ncol(a) ]
-    c <- c[, 8:ncol(a) ]
-    
-    duration[5,1] <- gather(b, key = "time", value ="dir") %>% count(dir) %>% filter(dir==1) %>% select(n) / N_c
-    duration[5,2] <- gather(c, key = "time", value ="dir") %>% count(dir)  %>% filter(dir==2) %>% select(n) / N_p
-    
-    duration <- duration %>% replace_na(as.list(c("P"=0)))
-    duration$dur <- 1:5
-    names(duration)[1:2] <- c("core", "periphery")
-    
-    return(duration)
-    
-}
-
-
-flows_analysis <- function(a) {
-    # Numero di persone che sono entrate nella P almeno una volta. # Possono anche aver fatto parte del C ad un certo punto
-    N_p2 <- sum(a == "P") 
-    # Numero di persone che sono entrate nella C almeno una volta. # Possono anche aver fatto parte del P ad un certo punto
-    N_c2 <- sum(a == "C") 
-    
-    b <- a
-    for (i in 2:nrow(a) ) {
-        b[ a[,i] == "O" & a[,i-1] == "O" , i ] <- "O to O"
-        b[ a[,i] == "O" & a[,i-1] == "P" , i ] <- "P to O"
-        b[ a[,i] == "O" & a[,i-1] == "C" , i ] <- "C to O"
-        b[ a[,i] == "P" & a[,i-1] == "O" , i ] <- "O to P"
-        b[ a[,i] == "P" & a[,i-1] == "P" , i ] <- "P to P"
-        b[ a[,i] == "P" & a[,i-1] == "C" , i ] <- "C to P"
-        b[ a[,i] == "C" & a[,i-1] == "O" , i ] <- "O to C"
-        b[ a[,i] == "C" & a[,i-1] == "P" , i ] <- "P to C"
-        b[ a[,i] == "C" & a[,i-1] == "C" , i ] <- "C to C"
-        
-    }
-    
-    b <- b[, 3:ncol(a) ]
-    
-    
-    aa <- gather(b, key = "time", value ="dir") %>% count(dir)
-    # aa <- aa[c(1,9,3,7,2,4,8,6),]
-    # aa <- aa[c(1,9,3,7,4,6),]
-    aa <- aa[c(1,7,4,9,3,6),]
-    aa$n <- aa$n / c(N_c2, N_c2, N_c2, N_p2, N_p2, N_p2)
-    
-    return(aa)
-}
-
 #----------------------------------------------------------------------------------------------------------------------
 #------------------------------ FLOW ANALYSIS  -------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------
@@ -226,50 +69,15 @@ for (i in seq(1, length(date)-time_average) ) {
     
 }
 
-# PRIMO GRAFICO -  QUANTI TIME STEP CONSECUTIVI SI RIMANE IN UN GRUPPO?
-duration <- duration_markov(a = activity)
-# Time step di 1 giorno
-ggplot(data = gather(duration, key = "where", value = "n", -dur ), aes(x=dur, y=n, fill=where)) + 
-    geom_bar(stat="identity", position=position_dodge()) + 
-    scale_fill_discrete(type = c("#ff4d00", "#22a0ff")) + 
-    theme_classic() + 
-    labs(x = "Stay duration (unit of time = 3 days)", 
-         y = "Probability", 
-         title = "What is the typical stay duration in core/periphery",
-         fill = "Group") +
-    annotate("text", x=5, y=0.7, label = "b)", size = 15) +
-    theme(text=element_text(size=20))
-    
 
 
-
-# SECONDO GRAFICO -  QUALI SONO I MOVIMENTI DELLA GENTE
-aa <- flows_analysis(activity)
-
-# barplot(aa$n[-9], legend.text = c("P", "c"))
-
-ggplot(data = aa, aes(x = factor(dir, levels = dir) , y = n)) + 
-    geom_bar(stat="identity" , fill = c("#ff4d00", 'orange', 'red', "#22a0ff", '#000099', 'darkgreen')) +
-    theme_classic() +
-    xlab( "User flow direction (C = Core, P = Periphery, O = Outside)" ) + 
-    ylab( "Transition probability" ) +
-    ylim(0, 0.8) +
-    labs(title= "What are the most common movements among those who share fake news?" ) +
-    annotate("text", x=1, y=0.7, label = "a)", size = 15) +
-    theme( text = element_text(size = 20),
-           title = element_text(size = 15))
-
-
-
-
-
-# COARSE GRAINING , ESISTONO "O" "P" AND "C"
+# COARSE GRAINING , "O" "P" AND "C"
 frequency <- data.frame("C"= apply(activity == "C", FUN = sum, MARGIN = 1), 
                         "P"= apply(activity == "P", FUN = sum, MARGIN = 1) )
 frequency <- frequency %>% mutate("sum" = C+P)
 frequency <- frequency[ frequency$sum != 0, ]
 
-a <- activity[frequency$sum != 0 , -1 ] # restringiamoci subito al sottoinsieme in cui gli user rientrano più di una volta
+a <- activity[frequency$sum != 0 , -1 ] # restringiamoci subito al sottoinsieme in cui gli user rientrano piÅ¯ di una volta
 frequency <- frequency[frequency$sum != 0 , ] 
 IdxC <- a == "C"
 IdxP <- a == "P"
@@ -283,7 +91,7 @@ for (i in 1:nrow(a)) {
     idxC <- as.numeric( which(IdxC[i,]) )
     idxP <- as.numeric( which(IdxP[i,]) )
     
-    CC_distance <- c(diff(idxC), -1) # l'ultimo termine è ausiliario e serve per far tornare le cose
+    CC_distance <- c(diff(idxC), -1) # l'ultimo termine Ä ausiliario e serve per far tornare le cose
     PP_distance <- c(diff(idxP), -1)
     
     nc <- length(idxC)
@@ -330,7 +138,7 @@ for (i in 1:nrow(a)) {
     if ( (i %% 1000) == 0 ) print(i %/% 1000)
 }
 
-# GRAFICO 1: PARTENZA DAL CORE
+# GRAFICO 1: starting from core
 
 breaks <- c(0, 3, 7, 18, 46, 121)
 tags <- c("0-2", "3-6", "7-17", "18-45", "46+")
@@ -374,7 +182,7 @@ r1 <- ggplot( data = barplot , aes(x = as.factor(return_time) , y = prob, fill =
 ( sum(summary(group_tags_C2C)) + sum(summary(group_tags_C2P))  ) / N_c
 
 
-# GRAFICO 2: PARTENZA DALLA PERIPHERY
+# GRAFICO 2: starting from PERIPHERY
 
 # N_p <- sum(frequency$P)
 N_p <- length(jumpsP2P) + length(jumpsP2C)
@@ -408,7 +216,7 @@ r2 <- ggplot( data = barplot , aes(x = return_time , y = prob, fill = type) ) +
 
 ggarrange(r1, r2, nrow = 1, ncol = 2, legend = "bottom", common.legend = T)
 
-# ATTENZIONE: Perchè ci sono alcune righe di activity in cui non compare nè P nè C?
+# ATTENZIONE: PerchÄ ci sono alcune righe di activity in cui non compare nÄ P nÄ C?
 
 sum(frequency$P == 0) / nrow(frequency) * 100 # only core
 sum(frequency$C == 0) / nrow(frequency) * 100 # only periphery
