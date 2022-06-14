@@ -10,19 +10,15 @@ suppressPackageStartupMessages({
     
 })
 
-# Italia
-# data <- read_tsv("C:/Users/pierg/Documents/R/CNR_project/network_ITA_it_20200122-20201202.tsv.gz")
-# data <- read_tsv("C:/Users/pierg/Documents/R/CNR_project/full_ITA_it_20200122-20201202.tsv.gz")
-# Spagna
-# data <- read_tsv("C:/Users/pierg/Documents/R/CNR_project/data_heuristica.tsv.gz")
+
 # USA
-data <- read_tsv("C:/Users/pierg/Documents/R/CNR_project/network_USA_en_20200122-20200522.tsv.gz")
-# GBR
-# data <- read_tsv("C:/Users/pierg/Documents/R/CNR_project/network_GBR_en_20200122-20200522.tsv.gz")
+data <- # Here you should define a dataframe with the Tweets IDs used in the paper, each classified according to subject as done in the following paper https://doi.org/10.1038/s41562-020-00994-6
 
 
 # Aggiungi o togli bot
 data <- data %>% filter(isBot == 0)
+
+### NOTE: throughout the code the terms "core" and "periphery" are used instead of "creators" and "consumers" #####
 
 
 cp_structure <- function(retweet, retweet_fakes, threshold, Tweet = T, GCC = F, communities.plot = F, community_detection = F) {
@@ -86,7 +82,7 @@ cp_structure <- function(retweet, retweet_fakes, threshold, Tweet = T, GCC = F, 
         
         max(comp$csize) # Dimensione della GCC
         sum(comp$csize[-which(max(comp$csize) == comp$csize)]) # Numero di persone al di fuori della GCC
-        sum(comp$csize[-which(max(comp$csize) == comp$csize)])/max(comp$csize) # Rapporto tra le due quantità
+        sum(comp$csize[-which(max(comp$csize) == comp$csize)])/max(comp$csize) # Rapporto tra le due quantitÃ 
         
         nodes <- names(comp$membership[comp$membership == 1])
         edges <- edges %>% filter(User %in% nodes, toUser %in% nodes) # %>% filter(toUser %in% nodes)
@@ -95,7 +91,7 @@ cp_structure <- function(retweet, retweet_fakes, threshold, Tweet = T, GCC = F, 
     }
     
     if (community_detection == T) {
-        #--- Dividiamo il network in communità
+        #--- Dividiamo il network in communitÃ 
         groups <- cluster_louvain(net)
         # groups <- cluster_infomap(net)
         sizes <- sizes(groups)
@@ -104,7 +100,7 @@ cp_structure <- function(retweet, retweet_fakes, threshold, Tweet = T, GCC = F, 
             filter(RTin.fakes > 0 | RTout.fakes > 0) %>%
             mutate(group = sapply(User, function(x) groups$membership[which(groups$names == x)] ) )
         
-        #--- Qual è la distribuzione di scettici nel network?
+        #--- Qual Ã¨ la distribuzione di scettici nel network?
         skeptic_distribution <- fakers %>% count(group) 
         idx <- as.numeric( skeptic_distribution$group[skeptic_distribution$n > 10 ] )
         # idx <- as.numeric( skeptic_distribution$group[skeptic_distribution$n == max(skeptic_distribution$n) ] )
@@ -146,14 +142,14 @@ cp_structure <- function(retweet, retweet_fakes, threshold, Tweet = T, GCC = F, 
     }
     
     
-    #--- Calcoliamo il numero di retweet per ogni singola coppia origine-destinazione all'interno della comunità idx
+    #--- Calcoliamo il numero di retweet per ogni singola coppia origine-destinazione all'interno della comunitÃ  idx
     n1 <- length(inner_fakers$User) # Traffico dati per il core
     n2 <- length(outer_fakers$User) # Traffico dati per la periphery
     n3 <- length(fakers$User) - n1 - n2
     # c(n1, n2, n3)
     
     
-    #--- Qual è il traffico di info tra i vari livelli di fakers?
+    #--- Qual Ã¨ il traffico di info tra i vari livelli di fakers?
     a1 <- length (( retweet_fakes %>% filter(User %in% inner_fakers$User, toUser %in% inner_fakers$User) )$User )
     a2 <- length (( retweet_fakes %>% filter(User %in% inner_fakers$User, toUser %in% outer_fakers$User) )$User )
     a3 <- length (( retweet_fakes %>% filter(User %in% inner_fakers$User, !( toUser %in% inner_fakers$User), !(toUser %in% outer_fakers$User) ) )$User )
@@ -219,6 +215,8 @@ a1 <- cp_structure(retweet, retweet_fakes, threshold = 0.2, Tweet = F)
 #----------------------------------------------------------------------------------------------------------------------
 #------------------------------  ANALYSIS OF CONTENT DISTRIBUTION -------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------
+                                  
+# To obtaine figure 1
 
 library(DescTools)
 content_distribution <- TRUE
@@ -332,22 +330,18 @@ if (graph_visualization){
 
 
 
-####### WORK IN PROGRESS --  Istogramma del numero di followers
-
-setwd("C:/Users/pierg/Documents/R/CNR_project")
-followers_c <- read.csv("followers_core.csv")$x
-followers_p <- read.csv("followers_peri.csv")$x
+####### >Histogram with the number of follower
 
 
-# followers_c <- sapply(core[core$RTout.fakes!=0,]$User, function(x){
-#     as.numeric( retweet_fakes %>% filter(User == x) %>% select(followers_count) %>% summarise(mean=mean(followers_count)) )
-# })
-# followers_c <- followers_c[!is.nan(followers_c)]
-# 
-# followers_p <- sapply(periphery[periphery$RTout.fakes != 0,]$User, function(x){
-#     as.numeric( retweet_fakes %>% filter(User == x) %>% select(followers_count) %>% summarise(mean=mean(followers_count)) )
-# })
-# followers_p <- followers_p[!is.nan(followers_p)]
+followers_c <- sapply(core[core$RTout.fakes!=0,]$User, function(x){
+    as.numeric( retweet_fakes %>% filter(User == x) %>% select(followers_count) %>% summarise(mean=mean(followers_count)) )
+})
+followers_c <- followers_c[!is.nan(followers_c)]
+
+followers_p <- sapply(periphery[periphery$RTout.fakes != 0,]$User, function(x){
+    as.numeric( retweet_fakes %>% filter(User == x) %>% select(followers_count) %>% summarise(mean=mean(followers_count)) )
+})
+followers_p <- followers_p[!is.nan(followers_p)]
 
 
 limit_p <- quantile(followers_p, probs=0.95)
