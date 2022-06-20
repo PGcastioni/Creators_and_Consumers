@@ -116,26 +116,12 @@ g1
 
 
 
-
-
 #----------------------------------------------------------------------------------------------------------------------
 #------------------------------  CAUSAL INFERENCE -------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------
 
-source("Basic_Timeseries_Causal_Inference.R")
 library(pracma)
 library(rEDM)
-getCC(list(df_save$user_core.rel, df_save$user_peri.rel), method = "pearson")
-getCR(list(df_save$user_peri.rel, df_save$content_fake.rel), lag = 0)
-getCR(list(df_save$user_core.rel, df_save$content_fake.rel), lag = 0)
-# getGC(list(df$user_core.rel, df$content_fake.rel), lag = 1, pval=F)
-# getMI(list(df$user_core.rel, df$content_fake.rel), bins = 5)
-# getTE(list(df$user_core.rel, df$content_fake.rel), lx = 1, ly = 1, type = 'quantiles', quantiles = 95)
-
-
-
-# params <- expand.grid(cause = 7:8, effect = 7:8, tp = seq(-10,+10))
-# params <- params %>% filter(cause != effect)
 
 # --- Plot di Cross correlation per diversi time-delay ------------
 out <- do.call(rbind, 
